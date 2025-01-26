@@ -18,17 +18,25 @@ interface CSVChatbotProps {
 }
 
 export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: 0,
+      text: "Hi! How can I help you?",
+      sender: 'bot'
+    }
+  ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const contextDescription = `
     You are analyzing two CSV files related to energy consumption projections. The first CSV gives an ESG score for different products, whereas the second CSV looks at utilities across time and some other factors. You are a financial and environmental expert who is ready to answer questions about this product.
   `;
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   useEffect(scrollToBottom, [messages]);
@@ -46,9 +54,8 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
   };
 
   const selectRelevantData = (data: any[], maxRows: number = 10) => {
-    // Select first few rows and only key columns
     const headers = Object.keys(data[0] || {});
-    const selectedColumns = headers.slice(0, 3); // Select first 3 columns
+    const selectedColumns = headers.slice(0, 3);
 
     return data.slice(0, maxRows).map(row => {
       const selectedRow: any = {};
@@ -80,16 +87,8 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
         dangerouslyAllowBrowser: process.env.NODE_ENV !== 'production'
       });
 
-      file1Path = 'tamu_proj/public/chatbot/utilitiesFinal.csv';
-      file2Path = '@public/chatbot/utilitiesFinal.csv';
-
-      console.log('file1path', file1Path)
-
       const csvData1 = await fetchCSVData('/chatbot/utilitiesFinal.csv');
       const csvData2 = await fetchCSVData('chatbot/ESG.csv');
-
-      console.log('csvData1', csvData1);
-      console.log('csvData2', csvData2);
 
       const relevantData1 = selectRelevantData(csvData1);
       const relevantData2 = selectRelevantData(csvData2);
@@ -106,11 +105,11 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
             content: `${input}\n\nData from first CSV:\n${JSON.stringify(relevantData1)}\n\nData from second CSV:\n${JSON.stringify(relevantData2)}`
           }
         ],
-        max_tokens: 300, // Limit response length
-        temperature: 0.7, // Add some randomness
-        top_p: 0.9, // Control diversity
-        frequency_penalty: 0.5, // Reduce repetition
-        presence_penalty: 0.5 // Further reduce repetition
+        max_tokens: 300,
+        temperature: 0.7,
+        top_p: 0.9,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.5
       });
 
       const botResponse: Message = {
@@ -141,8 +140,9 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
     <div className="flex flex-col h-full max-w-md mx-auto p-4 border rounded-lg shadow-lg bg-gray-100">
       {/* Chat Messages Section */}
       <div
-        className="flex-grow overflow-y-hidden space-y-2 bg-white/70 rounded-lg p-3"
-        style={{ maxHeight: "calc(100vh - 240px)" }} // Adjusting height for navbar and padding
+        ref={messagesContainerRef}
+        className="flex-grow overflow-y-auto space-y-2 bg-white/70 rounded-lg p-3"
+        style={{ maxHeight: "calc(100vh - 240px)" }}
       >
         {messages.map((msg) => (
           <div
@@ -156,7 +156,6 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
             {msg.text}
           </div>
         ))}
-        <div ref={messagesEndRef} />
       </div>
   
       {/* Input Form Section */}
@@ -185,5 +184,4 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
       <div className="h-16 bg-[#004977] w-full fixed bottom-0 left-0" />
     </div>
   );
-  
 }
