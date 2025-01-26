@@ -9,7 +9,7 @@ const RechartsWrapper = ({ spendingData, trendsData, COLORS }) => {
     <div>
       {/* Spending Overview */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-lg font-semibold text-gray-800 mb-4">Total January Spending</h2>
+        <h2 className="text-lg font-semibold text-gray-800 bg-transparent mb-4">Total January Spending</h2>
         <div className="flex flex-col items-center">
           <PieChart width={300} height={300}>
             <Pie
@@ -34,6 +34,28 @@ const RechartsWrapper = ({ spendingData, trendsData, COLORS }) => {
         </div>
       </div>
 
+
+      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Top Spending Categories</h2>
+        <div className="space-y-4">
+          {spendingData.map((category, index) => (
+            <div
+              key={index}
+              className="flex justify-between items-center border-b pb-2"
+            >
+              <div className="flex items-center">
+                <div
+                  className="w-8 h-8 rounded-full mr-4"
+                  style={{ backgroundColor: COLORS[index % COLORS.length] }}
+                ></div>
+                <p className="text-gray-800 font-medium">{category.name}</p>
+              </div>
+              <p className="text-gray-800 font-bold">${category.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Spending Trends */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4">Spending Trends</h2>
@@ -46,6 +68,20 @@ const RechartsWrapper = ({ spendingData, trendsData, COLORS }) => {
             <Bar dataKey="spending" fill="#8884d8" />
           </BarChart>
         </ResponsiveContainer>
+      </div>
+
+      <div className="bg-white rounded-lg shadow-md p-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-4">Life Plan</h2>
+        <p className="text-gray-600 mb-4">
+          Life happens. Let's plan for it. Review your priorities and events, and
+          see how you're tracking to your goals.
+        </p>
+        <button className="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-md">
+          Review My Life Plan
+        </button>
+      </div>
+      <div className="h-16">
+
       </div>
     </div>
   );
