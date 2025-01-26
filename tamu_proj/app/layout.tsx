@@ -3,6 +3,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/navbar";
+import Image from "next/image";
 
 import "./globals.css";
 
@@ -27,9 +28,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="w-full text-center font-bold text-2xl h-16 flex justify-center items-center">
-          EcoSaver
-        </div>
+        <div className="flex justify-center my-4 ">
+      <Image
+          src="/capitalone-logo.png"
+          alt="Capital One Logo"
+          width={120}
+          height={30}
+          priority
+        />
+      </div>
         {children}
         < Navbar />
       </body>

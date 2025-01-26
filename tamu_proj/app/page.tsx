@@ -12,16 +12,6 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100 p-6 space-y-6">
-      {/* Capital One Logo */}
-      <div className="flex justify-center mb-4">
-        <Image
-          src="/capitalone-logo.png"
-          alt="Capital One Logo"
-          width={120}
-          height={30}
-          priority
-        />
-      </div>
 
       {/* Cards Section */}
       <section className="space-y-6">
