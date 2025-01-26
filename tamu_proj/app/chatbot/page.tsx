@@ -138,15 +138,19 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
   };
 
   return (
-    <div className="max-w-md mx-auto p-4 border rounded-lg shadow-lg bg-[#004977]">
-      <div className="h-96 overflow-y-auto mb-4 space-y-2 bg-white/70 rounded-lg p-3">
+    <div className="flex flex-col h-full max-w-md mx-auto p-4 border rounded-lg shadow-lg bg-gray-100">
+      {/* Chat Messages Section */}
+      <div
+        className="flex-grow overflow-y-hidden space-y-2 bg-white/70 rounded-lg p-3"
+        style={{ maxHeight: "calc(100vh - 240px)" }} // Adjusting height for navbar and padding
+      >
         {messages.map((msg) => (
-          <div 
-            key={msg.id} 
-            className={`p-3 rounded-xl max-w-[80%] break-words ${
-              msg.sender === 'user' 
-                ? 'bg-[#d03027] text-white self-end ml-auto' 
-                : 'bg-[#004977] text-white self-start mr-auto'
+          <div
+            key={msg.id}
+            className={`p-3 rounded-2xl max-w-[80%] break-words ${
+              msg.sender === "user"
+                ? "bg-gray-300 text-gray-700 self-end ml-auto"
+                : "bg-gradient-to-r from-blue-700 to-blue-900 text-white self-start mr-auto"
             }`}
           >
             {msg.text}
@@ -154,24 +158,32 @@ export default function CSVChatbot({ file1Path, file2Path }: CSVChatbotProps) {
         ))}
         <div ref={messagesEndRef} />
       </div>
-
-      <form onSubmit={handleSubmit} className="flex rounded-lg overflow-hidden">
-        <input 
+  
+      {/* Input Form Section */}
+      <form
+        onSubmit={handleSubmit}
+        className="flex rounded-lg overflow-hidden mt-4 bg-[#004977]"
+      >
+        <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ask about your CSV data..."
-          className="flex-grow p-3 bg-white text-[#004977] placeholder-[#d03027]/50 focus:outline-none focus:ring-2 focus:ring-[#d03027]"
+          className="flex-grow p-3 bg-white text-[#004977] placeholder-[#004977] focus:outline-none focus:ring-2 focus:ring-[#d03027]"
           disabled={isLoading}
         />
-        <button 
-          type="submit" 
-          className="bg-[#d03027] text-white p-3 hover:bg-[#004977] transition-colors duration-300"
+        <button
+          type="submit"
+          className="bg-gradient-to-r from-blue-700 to-blue-900 text-white p-3 hover:bg-[#004977] transition-colors duration-300"
           disabled={isLoading}
         >
-          {isLoading ? 'Processing...' : 'Send'}
+          {isLoading ? "Processing..." : "Send"}
         </button>
       </form>
+  
+      {/* Navbar Placeholder */}
+      <div className="h-16 bg-[#004977] w-full fixed bottom-0 left-0" />
     </div>
   );
+  
 }

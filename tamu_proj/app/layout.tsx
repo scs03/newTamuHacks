@@ -1,10 +1,8 @@
 'use client'
 
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "@/components/navbar";
 import Image from "next/image";
-
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,7 +15,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -26,19 +23,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col h-screen`}
       >
-        <div className="flex justify-center my-4 ">
-      <Image
-          src="/capitalone-logo.png"
-          alt="Capital One Logo"
-          width={120}
-          height={30}
-          priority
-        />
-      </div>
-        {children}
-        < Navbar />
+        {/* Logo Section */}
+        <div className="flex justify-center my-4">
+          <Image
+            src="/capitalone-logo.png"
+            alt="Capital One Logo"
+            width={120}
+            height={30}
+            priority
+          />
+        </div>
+
+        {/* Content Section */}
+        <div className="flex-grow overflow-y-auto">
+          {children}
+        </div>
+
+        {/* Navbar Section */}
+        <Navbar />
       </body>
     </html>
   );
