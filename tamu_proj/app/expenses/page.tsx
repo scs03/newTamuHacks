@@ -112,7 +112,7 @@ const Expenses = () => {
 
       const data = await res.json();
       setEsgResults(data.results);
-
+      
       // Step 4: Calculate the average ESG rating
       const validScores = data.results
         .map((item: any) => esgScoreMapping[item.esgScore.toLowerCase()])
@@ -120,7 +120,7 @@ const Expenses = () => {
 
       if (validScores.length > 0) {
         const average = validScores.reduce((sum: number, score: number) => sum + score, 0) / validScores.length;
-
+      
         // Map back to the letter grade
         const roundedAverage = Math.round(average); // Round to the nearest integer
         setAverageRating(reverseEsgScoreMapping[roundedAverage] || "Unknown");
@@ -132,6 +132,8 @@ const Expenses = () => {
     } finally {
       setIsLoading(false);
     }
+
+    console.log("FETCHED", esgResults, averageRating);
   };
 
   const transactions = [
@@ -157,27 +159,39 @@ const Expenses = () => {
           id="category"
           value={selectedCategory}
           onChange={handleSelectionChange}
-          className="p-2 border rounded-md"
+          className="p-2  mt-2 bg-transparent text-blue-700 text-2xl font-semibold rounded-md"
         >
-          <option value="Purchases">Purchases</option>
-          <option value="Utilities">Utilities</option>
+          <option value="Purchases">PURCHASES</option>
+          <option value="Utilities">UTILITIES</option>
         </select>
       </div>
 
       {selectedCategory === "Purchases" && (
-        <div className="w-full mt-4">
-          <div className="flex justify-center gap-4 mb-6">
+        <div className="w-full">
+          <div className="flex justify-center item-center gap-4 h-32 px-4 mt-2">
           <button
-              className="p-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg shadow-md"
+              className="p-2 w-full bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg shadow-md"
               onClick={() => (cameraOpen ? setCameraOpen(false) : openCamera())}
             >
-              Open Webcam
+              <div className="flex justify-center">
+
+                <svg className="w-12 h-12 align-middle  text-gray-300 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M4 18V8a1 1 0 0 1 1-1h1.5l1.707-1.707A1 1 0 0 1 8.914 5h6.172a1 1 0 0 1 .707.293L17.5 7H19a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z"/>
+                  <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+                </svg>
+              </div>
+              <p className="w-full text-center">Snap</p>
             </button>
             <label
               htmlFor="fileInput"
-              className="p-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg shadow-md"
+              className="p-2 w-full bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg shadow-md"
             >
-              Upload File
+              <div className="flex justify-center">
+              <svg className="w-12 h-12 align-middle text-gray-300 mt-6 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linejoin="round" stroke-width="2" d="M10 3v4a1 1 0 0 1-1 1H5m14-4v16a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V7.914a1 1 0 0 1 .293-.707l3.914-3.914A1 1 0 0 1 9.914 3H18a1 1 0 0 1 1 1Z"/>
+              </svg>
+              </div>
+              <p className="w-full text-center">Upload</p>
             </label>
             <input
               id="fileInput"
@@ -220,14 +234,6 @@ const Expenses = () => {
           )}
 
 <div className="container mx-auto p-4">
-      {/* <h1 className="text-xl font-bold mb-4">ESG Ratings</h1>
-      <button
-        onClick={handleFetchEsgRatings}
-        className={`px-4 py-2 bg-purple-500 text-white rounded ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
-        disabled={isLoading}
-      >
-        {isLoading ? "Processing..." : "Fetch ESG Ratings"}
-      </button> */}
 
       {isLoading && (
         <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
@@ -249,39 +255,6 @@ const Expenses = () => {
           `}</style>
         </div>
       )}
-
-      {/* {filteredResult && !isLoading && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">Filtered Products:</h2>
-          <ul className="list-disc ml-5">
-            {filteredResult.map((item, index) => (
-              <li key={index}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-
-      {esgResults.length > 0 && !isLoading && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">ESG Ratings:</h2>
-          <ul className="list-disc ml-5">
-            {esgResults.map((item, index) => (
-              <li key={index}>
-                <strong>{item.name}:</strong> ESG Score: {item.esgScore}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )} */}
-
-      {/* {averageRating && !isLoading && (
-        <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">Average ESG Rating:</h2>
-          <p className="text-lg">
-            <strong>{averageRating}</strong>
-          </p>
-        </div>
-      )} */}
     </div>
         
     {(selectedFile || capturedImage) && (
@@ -306,67 +279,11 @@ const Expenses = () => {
                         <td className="border-t border-gray-300 px-4 py-2">{item.esgScore.toUpperCase()}</td>
                       </tr>
                     ))}
-                    {/* <tr>
-                      <td className="border-t border-gray-300 px-4 py-2">
-                        Apple
-                      </td>
-                      <td className="border-t border-gray-300 px-4 py-2">A</td>
-                    </tr>
-                    <tr>
-                      <td className="border-t border-gray-300 px-4 py-2">
-                        Banana
-                      </td>
-                      <td className="border-t border-gray-300 px-4 py-2">B</td>
-                    </tr> */}
                   </tbody>
                 </table>
               </div>
             </div>
           )}
-
-
-        {/* <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-md space-y-4 m-4" >
-            <div className="flex items-center justify-between">
-                <h2 className="text-xl font-semibold text-gray-800">History:</h2>
-            </div>
-            <div className="collapse bg-base-200">
-                <input type="radio" name="my-accordion-1" />
-                <div className="collapse-title text-xl font-medium">
-                Jan 24, 2025
-                </div>
-                    <div className="collapse-content">
-                        <p>
-
-                        </p>
-                    </div>
-                </div>
-                <div className="collapse bg-base-200">
-                    <input type="radio" name="my-accordion-1" />
-                    <div className="collapse-title text-xl font-medium">
-                        Jan 20, 2025
-                    </div>
-                    <div className="collapse-content">
-                        <p>
-
-                        </p>
-                    </div>
-                </div>
-                <div className="collapse bg-base-200">
-                    <input type="radio" name="my-accordion-1" />
-                    <div className="collapse-title text-xl font-medium">
-
-                        <span>
-
-                        </span>
-                    </div>
-                    <div className="collapse-content">
-                        <p>
-                            
-                        </p>
-                    </div>
-                </div>
-            </div> */}
-
 
 
 
@@ -387,10 +304,10 @@ const Expenses = () => {
     {/* Grouped Transactions by Date */}
     <div className="space-y-4">
     {averageRating && (
-        <div>
+        <div className="">
           <h3 className="text-sm font-semibold text-gray-500 mb-2">January 26</h3>
-          <div className="divide-y divide-gray-300 bg-gray-100 p-4 rounded-md">
-            <div className="flex justify-between items-center py-2">
+          <div className={`divide-y divide-gray-300 bg-gray-100 p-4 rounded-md shadow ${averageRating === 'A' || averageRating === 'B' ? 'shadow-blue-700' : 'shadow-red-700'}`}>
+            <div className="flex justify-between items-center py-2 ">
               <div>
                 <p className="text-gray-800 font-medium">Walmart</p>
                 <p className="text-sm text-gray-500">Grocery</p>
@@ -406,11 +323,18 @@ const Expenses = () => {
       {Object.entries(groupedTransactions).map(([date, transactions]) => (
         <div key={date}>
           <h3 className="text-sm font-semibold text-gray-500 mb-2">{date}</h3>
-          <div className="divide-y divide-gray-300 bg-gray-100 p-4 rounded-md">
             {transactions.map((transaction, index) => (
+          <div 
+            key={`${date}-${index}`}
+            className={`divide-y divide-gray-300 bg-gray-100 shadow p-4 rounded-md ${
+            transaction.esg === 'A' || transaction.esg === 'B'
+              ? 'shadow-blue-700'
+              : 'shadow-red-700'
+          }`}
+        >
               <div
                 key={index}
-                className="flex justify-between items-center py-2"
+                className={`flex justify-between items-center py-2 ${transaction.esg === 'A' || transaction.esg === 'B' ? 'shadow-blue-700' : 'shadow-red-700'}`}
               >
                 <div>
                   <p className="text-gray-800 font-medium">
@@ -429,8 +353,8 @@ const Expenses = () => {
                   </p>
                 </div>
               </div>
-            ))}
           </div>
+            ))}
         </div>
       ))}
     </div>
