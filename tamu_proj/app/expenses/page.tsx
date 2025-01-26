@@ -44,6 +44,8 @@ const Expenses = () => {
 
   const webcamRef = useRef<Webcam>(null);
 
+  
+
   const openCamera = async () => {
     try {
       await navigator.mediaDevices.getUserMedia({ video: true });
@@ -132,6 +134,22 @@ const Expenses = () => {
     }
   };
 
+  const transactions = [
+    { name: "Trader Joe's", category: "Grocery", date: "January 3", amount: "$34.67", esg: "A" },
+    { name: "Whole Foods", category: "Grocery", date: "December 31", amount: "$50.31", esg: "B" },
+    { name: "Aldi", category: "Grocery", date: "December 16", amount: "$25.77", esg: "A" },
+    { name: "Walmart", category: "Grocery", date: "December 14", amount: "$63.54", esg: "C" },
+    { name: "Kroger", category: "Grocery", date: "December 13", amount: "$45.45", esg: "B" },
+  ];
+
+  const groupedTransactions = transactions.reduce((groups, transaction) => {
+    if (!groups[transaction.date]) {
+      groups[transaction.date] = [];
+    }
+    groups[transaction.date].push(transaction);
+    return groups;
+  }, {} as Record<string, typeof transactions>);
+
   return (
     <div className="bg-gray-100 h-screen ">
       <div className="dropdown dropdown-bottom">
@@ -148,16 +166,16 @@ const Expenses = () => {
 
       {selectedCategory === "Purchases" && (
         <div className="w-full mt-4">
-          <div className="flex justify-center">
-            <button
-              className="p-2 m-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg mr-14"
+          <div className="flex justify-center gap-4 mb-6">
+          <button
+              className="p-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg shadow-md"
               onClick={() => (cameraOpen ? setCameraOpen(false) : openCamera())}
             >
               Open Webcam
             </button>
             <label
               htmlFor="fileInput"
-              className="p-2 m-2 bg-green-500 ml-14 text-white rounded cursor-pointer"
+              className="p-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg shadow-md"
             >
               Upload File
             </label>
@@ -171,24 +189,25 @@ const Expenses = () => {
           </div>
 
           {cameraOpen && (
-            <div className="m-4 rounded-xl border p-2 bg-sky-900 h-64 flex justify-center items-center">
+            <div className="rounded-lg border p-4 bg-white shadow-md flex flex-col items-center justify-center mb-6">
               <Webcam
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
-                className="rounded-lg"
+                className="rounded-lg w-full max-w-sm"
               />
               <button
-                className="p-2 mt-2 bg-red-500 text-white rounded"
+                className="p-2 mt-4 bg-red-500 text-white rounded-lg w-full max-w-xs"
                 onClick={handleCapture}
               >
-                {capturedImage ? "Close" : "Capture"}
+                {capturedImage ? "Close Camera" : "Capture"}
               </button>
             </div>
           )}
 
+          {/* Captured Image Display */}
           {capturedImage && (
-            <div className="m-4 rounded-xl border p-2 bg-gray-100">
-              <p>Captured Image:</p>
+            <div className="rounded-lg border p-4 bg-gray-100 mb-6">
+              <p className="font-medium mb-2">Captured Image:</p>
               <img src={capturedImage} alt="Captured" className="rounded-lg" />
             </div>
           )}
@@ -201,19 +220,19 @@ const Expenses = () => {
           )}
 
 <div className="container mx-auto p-4">
-      <h1 className="text-xl font-bold mb-4">ESG Ratings</h1>
+      {/* <h1 className="text-xl font-bold mb-4">ESG Ratings</h1>
       <button
         onClick={handleFetchEsgRatings}
         className={`px-4 py-2 bg-purple-500 text-white rounded ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
         disabled={isLoading}
       >
         {isLoading ? "Processing..." : "Fetch ESG Ratings"}
-      </button>
+      </button> */}
 
       {isLoading && (
         <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
           <div
-            className="bg-purple-500 h-2.5 rounded-full animate-marquee"
+            className="bg-gradient-to-r from-blue-700 to-blue-900 h-2.5 rounded-full animate-marquee"
             style={{
               animation: "marquee 2s linear infinite",
             }}
@@ -231,7 +250,7 @@ const Expenses = () => {
         </div>
       )}
 
-      {filteredResult && !isLoading && (
+      {/* {filteredResult && !isLoading && (
         <div className="mt-4">
           <h2 className="text-lg font-semibold mb-2">Filtered Products:</h2>
           <ul className="list-disc ml-5">
@@ -253,43 +272,57 @@ const Expenses = () => {
             ))}
           </ul>
         </div>
-      )}
+      )} */}
 
-      {averageRating && !isLoading && (
+      {/* {averageRating && !isLoading && (
         <div className="mt-4">
           <h2 className="text-lg font-semibold mb-2">Average ESG Rating:</h2>
           <p className="text-lg">
             <strong>{averageRating}</strong>
           </p>
         </div>
-      )}
+      )} */}
     </div>
         
-        {(selectedFile || capturedImage) && (
-            <div className="mt-4 w-full">
-                <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg p-6 shadow-md mx-4">
-                    <p className="text-sm font-medium" >ESG Evaluation:</p>
-                    <table className="w-full border-collapse  border-gray-400 mt-2">
-                        <thead>
-                            <tr>
-                                <th className=" border-gray-400 px-4 py-2">Item</th>
-                                <th className=" border-gray-400 px-4 py-2">ESG Score</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td className=" border-gray-400 px-4 py-2">Apple</td>
-                                <td className=" border-gray-400 px-4 py-2">37</td>
-                            </tr>
-                            <tr>
-                                <td className=" border-gray-400 px-4 py-2">Banana</td>
-                                <td className=" border-gray-400 px-4 py-2">48</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    {(selectedFile || capturedImage) && (
+            <div className="mt-6">
+              <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg p-6 shadow-md mx-4">
+                <p className="text-lg font-medium mb-4">Average ESG: <strong className="text-xl ">{averageRating}</strong></p>
+                <table className="w-full border-collapse border-gray-400">
+                  <thead>
+                    <tr>
+                      <th className="border-b border-gray-300 px-4 py-2 text-left">
+                        Item
+                      </th>
+                      <th className="border-b border-gray-300 px-4 py-2 text-left">
+                        ESG Score: 
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {esgResults.map((item, index) => (
+                      <tr key={index}>
+                        <td className="border-t border-gray-300 px-4 py-2">{item.name}</td>
+                        <td className="border-t border-gray-300 px-4 py-2">{item.esgScore.toUpperCase()}</td>
+                      </tr>
+                    ))}
+                    {/* <tr>
+                      <td className="border-t border-gray-300 px-4 py-2">
+                        Apple
+                      </td>
+                      <td className="border-t border-gray-300 px-4 py-2">A</td>
+                    </tr>
+                    <tr>
+                      <td className="border-t border-gray-300 px-4 py-2">
+                        Banana
+                      </td>
+                      <td className="border-t border-gray-300 px-4 py-2">B</td>
+                    </tr> */}
+                  </tbody>
+                </table>
+              </div>
             </div>
-        )}
+          )}
 
 
         {/* <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-md space-y-4 m-4" >
@@ -335,78 +368,89 @@ const Expenses = () => {
             </div> */}
 
 
-<div className="bg-white border border-gray-300 rounded-lg p-6 shadow-md space-y-4 m-4">
-  <div className="flex items-center justify-between">
-    <h2 className="text-xl font-semibold text-gray-800">Recent Transactions:</h2>
-    <a href="#" className="text-blue-600 text-sm font-medium hover:underline">
-      View All
-    </a>
-  </div>
+
 
   {/* Transactions */}
-  <div className="space-y-4">
-    {/* Transaction 1 */}
-    <div className="flex justify-between items-center border-b pb-2">
-      <div>
-        <p className="text-gray-800 font-medium">Walmart</p>
-        <p className="text-sm text-gray-500">Grocery</p>
-        <p className="text-sm text-gray-400">January 3</p>
-      </div>
-      <p className="text-gray-800 font-semibold">$6.47</p>
+  <div className="bg-white rounded-lg shadow-md p-6 mx-4 mt-4">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-lg font-semibold text-gray-800">
+        Recent Transactions:
+      </h2>
+      <a
+        href="#"
+        className="text-blue-600 font-medium text-sm hover:underline"
+      >
+        View All
+      </a>
     </div>
 
-    {/* Transaction 2 */}
-    <div className="flex justify-between items-center border-b pb-2">
-      <div>
-        <p className="text-gray-800 font-medium">McDonald's</p>
-        <p className="text-sm text-gray-500">Dining</p>
-        <p className="text-sm text-gray-400">December 31</p>
-      </div>
-      <p className="text-gray-800 font-semibold">$8.31</p>
-    </div>
-
-    {/* Transaction 3 */}
-    <div className="flex justify-between items-center border-b pb-2">
-      <div>
-        <p className="text-gray-800 font-medium">TST* Village Burger BA</p>
-        <p className="text-sm text-gray-500">Dining</p>
-        <p className="text-sm text-gray-400">December 16</p>
-      </div>    
-      <p className="text-gray-800 font-semibold">$10.77</p>
-    </div>
-
-    {/* Transaction 4 */}
-    <div className="flex justify-between items-center border-b pb-2">
-      <div>
-        <p className="text-gray-800 font-medium">Ulta Beauty</p>
-        <p className="text-sm text-gray-500">Merchandise</p>
-        <p className="text-sm text-gray-400">December 14</p>
-      </div>
-      <p className="text-gray-800 font-semibold">$36.54</p>
-    </div>
-
-    {/* Transaction 5 */}
-    <div className="flex justify-between items-center">
-      <div>
-        <p className="text-gray-800 font-medium">Five Below</p>
-        <p className="text-sm text-gray-500">Merchandise</p>
-        <p className="text-sm text-gray-400">December 13</p>
-      </div>
-      <p className="text-gray-800 font-semibold">$35.45</p>
-    </div>
-  </div>
-
-  {/* View All Transactions Button */}
-  <div className="text-center mt-4">
-    <a
-      href="#"
-      className="text-blue-600 font-medium hover:underline text-sm"
-    >
-      View All Transactions
-    </a>
-  </div>
-</div>
+    {/* Grouped Transactions by Date */}
+    <div className="space-y-4">
+    {averageRating && (
+        <div>
+          <h3 className="text-sm font-semibold text-gray-500 mb-2">January 26</h3>
+          <div className="divide-y divide-gray-300 bg-gray-100 p-4 rounded-md">
+            <div className="flex justify-between items-center py-2">
+              <div>
+                <p className="text-gray-800 font-medium">Walmart</p>
+                <p className="text-sm text-gray-500">Grocery</p>
+              </div>
+              <div className="text-right">
+                <p className="text-gray-800 font-bold">$32.47</p>
+                <p className="text-sm text-gray-500">ESG Score: {averageRating}</p>
+              </div>
+            </div>
+          </div>
         </div>
+      )}
+      {Object.entries(groupedTransactions).map(([date, transactions]) => (
+        <div key={date}>
+          <h3 className="text-sm font-semibold text-gray-500 mb-2">{date}</h3>
+          <div className="divide-y divide-gray-300 bg-gray-100 p-4 rounded-md">
+            {transactions.map((transaction, index) => (
+              <div
+                key={index}
+                className="flex justify-between items-center py-2"
+              >
+                <div>
+                  <p className="text-gray-800 font-medium">
+                    {transaction.name}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {transaction.category}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-gray-800 font-bold">
+                    {transaction.amount}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    ESG Score: {transaction.esg}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+
+    {/* View All Transactions Link */}
+    <div className="text-center mt-4 ">
+      <a
+        href="#"
+        className="text-blue-600 font-medium hover:underline text-sm"
+      >
+        View All Transactions
+      </a>
+    </div>
+  </div>
+
+  <div className="mb-16 h-20">
+
+  </div>
+
+</div>
       )}
     </div>
   );
