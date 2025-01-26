@@ -3,12 +3,44 @@
 import React from "react";
 import { useState, useRef } from "react";
 import Webcam from "react-webcam";
+import { detectTextFromImage } from "../api/analyze-receipts";
+
+export type TextDetection = {
+  DetectedText?: string;
+  Confidence?: number;
+  Type?: string;
+  Id?: number;
+  ParentId?: number;
+};
+
+type JsonResponseType = {
+  TextDetections?: TextDetection[];
+  error?: string;
+};
+
+const esgScoreMapping: { [key: string]: number } = {
+  a: 4,
+  b: 3,
+  c: 2,
+  d: 1,
+};
+
+const reverseEsgScoreMapping: { [key: number]: string } = {
+  4: "A",
+  3: "B",
+  2: "C",
+  1: "D",
+};
 
 const Expenses = () => {
   const [selectedCategory, setSelectedCategory] = useState("Purchases");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [cameraOpen, setCameraOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [filteredResult, setFilteredResult] = useState<string[] | null>(null);
+  const [esgResults, setEsgResults] = useState<any[]>([]);
+  const [averageRating, setAverageRating] = useState<string | null>(null);
 
   const webcamRef = useRef<Webcam>(null);
 
@@ -36,13 +68,68 @@ const Expenses = () => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      handleFetchEsgRatings();
       setSelectedFile(file);
       setCapturedImage(null); // Clear captured image if a file is uploaded
     }
+
   };
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedCategory(e.target.value);
+  };
+
+  const handleFetchEsgRatings = async () => {
+    setIsLoading(true);
+
+    try {
+      const bucketName = "tamuhackreciept";
+      const imageName = "g4.jpg";
+
+      // Step 1: Detect text from the image
+      const textDetections = await detectTextFromImage(bucketName, imageName);
+
+      // Step 2: Filter detected text to hardcoded products
+      const hardcodedProducts = ["Almond Milk", "Corn Flakes", "Jif Creamy", "Pirate's Booty"];
+      setFilteredResult(hardcodedProducts);
+
+      // Step 3: Fetch ESG ratings for the filtered products
+      const res = await fetch("/api/fetch-esg", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ products: hardcodedProducts }),
+      });
+      console.log("FETCH");
+
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch ESG data: ${res.statusText}`);
+      }
+
+      const data = await res.json();
+      setEsgResults(data.results);
+
+      // Step 4: Calculate the average ESG rating
+      const validScores = data.results
+        .map((item: any) => esgScoreMapping[item.esgScore.toLowerCase()])
+        .filter((score: number | undefined) => score !== undefined);
+
+      if (validScores.length > 0) {
+        const average = validScores.reduce((sum: number, score: number) => sum + score, 0) / validScores.length;
+
+        // Map back to the letter grade
+        const roundedAverage = Math.round(average); // Round to the nearest integer
+        setAverageRating(reverseEsgScoreMapping[roundedAverage] || "Unknown");
+      } else {
+        setAverageRating(null); // No valid scores found
+      }
+    } catch (error) {
+      console.error("Error in processing ESG ratings:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -113,6 +200,71 @@ const Expenses = () => {
             </div>
           )}
 
+<div className="container mx-auto p-4">
+      <h1 className="text-xl font-bold mb-4">ESG Ratings</h1>
+      <button
+        onClick={handleFetchEsgRatings}
+        className={`px-4 py-2 bg-purple-500 text-white rounded ${isLoading ? "opacity-50 cursor-not-allowed" : ""}`}
+        disabled={isLoading}
+      >
+        {isLoading ? "Processing..." : "Fetch ESG Ratings"}
+      </button>
+
+      {isLoading && (
+        <div className="mt-4 w-full bg-gray-200 rounded-full h-2.5 overflow-hidden">
+          <div
+            className="bg-purple-500 h-2.5 rounded-full animate-marquee"
+            style={{
+              animation: "marquee 2s linear infinite",
+            }}
+          ></div>
+          <style jsx>{`
+            @keyframes marquee {
+              0% {
+                transform: translateX(-100%);
+              }
+              100% {
+                transform: translateX(100%);
+              }
+            }
+          `}</style>
+        </div>
+      )}
+
+      {filteredResult && !isLoading && (
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold mb-2">Filtered Products:</h2>
+          <ul className="list-disc ml-5">
+            {filteredResult.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {esgResults.length > 0 && !isLoading && (
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold mb-2">ESG Ratings:</h2>
+          <ul className="list-disc ml-5">
+            {esgResults.map((item, index) => (
+              <li key={index}>
+                <strong>{item.name}:</strong> ESG Score: {item.esgScore}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {averageRating && !isLoading && (
+        <div className="mt-4">
+          <h2 className="text-lg font-semibold mb-2">Average ESG Rating:</h2>
+          <p className="text-lg">
+            <strong>{averageRating}</strong>
+          </p>
+        </div>
+      )}
+    </div>
+        
         {(selectedFile || capturedImage) && (
             <div className="mt-4 w-full">
                 <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg p-6 shadow-md mx-4">
