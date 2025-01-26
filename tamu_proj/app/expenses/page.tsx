@@ -4,6 +4,7 @@ import React from "react";
 import { useState, useRef } from "react";
 import Webcam from "react-webcam";
 import { detectTextFromImage } from "../api/analyze-receipts";
+import Util from '@/components/util';
 
 export type TextDetection = {
   DetectedText?: string;
@@ -375,6 +376,9 @@ const Expenses = () => {
   </div>
 
 </div>
+      )}
+      { selectedCategory === 'Utilities' && (
+        <Util />
       )}
     </div>
   );
