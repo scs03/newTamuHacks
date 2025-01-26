@@ -46,7 +46,7 @@ const Expenses = () => {
   };
 
   return (
-    <div>
+    <div className="bg-gray-100 h-screen ">
       <div className="dropdown dropdown-bottom">
         <select
           id="category"
@@ -63,7 +63,7 @@ const Expenses = () => {
         <div className="w-full mt-4">
           <div className="flex justify-center">
             <button
-              className="p-2 m-2 bg-blue-500 mr-14 text-white rounded"
+              className="p-2 m-2 bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg mr-14"
               onClick={() => (cameraOpen ? setCameraOpen(false) : openCamera())}
             >
               Open Webcam
@@ -113,33 +113,147 @@ const Expenses = () => {
             </div>
           )}
 
-{(selectedFile || capturedImage) && (
+        {(selectedFile || capturedImage) && (
             <div className="mt-4 w-full">
-              <div className="m-4 rounded-xl bg-sky-900 text-white p-2 ">
-                <p>ESG Score:</p>
-                <table className="w-full border-collapse  border-gray-400 mt-2">
-                  <thead>
-                    <tr>
-                      <th className=" border-gray-400 px-4 py-2">Item</th>
-                      <th className=" border-gray-400 px-4 py-2">ESG Score</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className=" border-gray-400 px-4 py-2">Apple</td>
-                      <td className=" border-gray-400 px-4 py-2">37</td>
-                    </tr>
-                    <tr>
-                      <td className=" border-gray-400 px-4 py-2">Banana</td>
-                      <td className=" border-gray-400 px-4 py-2">48</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+                <div className="bg-gradient-to-r from-blue-700 to-blue-900 text-white rounded-lg p-6 shadow-md mx-4">
+                    <p className="text-sm font-medium" >ESG Evaluation:</p>
+                    <table className="w-full border-collapse  border-gray-400 mt-2">
+                        <thead>
+                            <tr>
+                                <th className=" border-gray-400 px-4 py-2">Item</th>
+                                <th className=" border-gray-400 px-4 py-2">ESG Score</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className=" border-gray-400 px-4 py-2">Apple</td>
+                                <td className=" border-gray-400 px-4 py-2">37</td>
+                            </tr>
+                            <tr>
+                                <td className=" border-gray-400 px-4 py-2">Banana</td>
+                                <td className=" border-gray-400 px-4 py-2">48</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          )}
+        )}
 
 
+        {/* <div className="bg-white border border-gray-300 rounded-lg p-6 shadow-md space-y-4 m-4" >
+            <div className="flex items-center justify-between">
+                <h2 className="text-xl font-semibold text-gray-800">History:</h2>
+            </div>
+            <div className="collapse bg-base-200">
+                <input type="radio" name="my-accordion-1" />
+                <div className="collapse-title text-xl font-medium">
+                Jan 24, 2025
+                </div>
+                    <div className="collapse-content">
+                        <p>
+
+                        </p>
+                    </div>
+                </div>
+                <div className="collapse bg-base-200">
+                    <input type="radio" name="my-accordion-1" />
+                    <div className="collapse-title text-xl font-medium">
+                        Jan 20, 2025
+                    </div>
+                    <div className="collapse-content">
+                        <p>
+
+                        </p>
+                    </div>
+                </div>
+                <div className="collapse bg-base-200">
+                    <input type="radio" name="my-accordion-1" />
+                    <div className="collapse-title text-xl font-medium">
+
+                        <span>
+
+                        </span>
+                    </div>
+                    <div className="collapse-content">
+                        <p>
+                            
+                        </p>
+                    </div>
+                </div>
+            </div> */}
+
+
+<div className="bg-white border border-gray-300 rounded-lg p-6 shadow-md space-y-4 m-4">
+  <div className="flex items-center justify-between">
+    <h2 className="text-xl font-semibold text-gray-800">Recent Transactions:</h2>
+    <a href="#" className="text-blue-600 text-sm font-medium hover:underline">
+      View All
+    </a>
+  </div>
+
+  {/* Transactions */}
+  <div className="space-y-4">
+    {/* Transaction 1 */}
+    <div className="flex justify-between items-center border-b pb-2">
+      <div>
+        <p className="text-gray-800 font-medium">Walmart</p>
+        <p className="text-sm text-gray-500">Grocery</p>
+        <p className="text-sm text-gray-400">January 3</p>
+      </div>
+      <p className="text-gray-800 font-semibold">$6.47</p>
+    </div>
+
+    {/* Transaction 2 */}
+    <div className="flex justify-between items-center border-b pb-2">
+      <div>
+        <p className="text-gray-800 font-medium">McDonald's</p>
+        <p className="text-sm text-gray-500">Dining</p>
+        <p className="text-sm text-gray-400">December 31</p>
+      </div>
+      <p className="text-gray-800 font-semibold">$8.31</p>
+    </div>
+
+    {/* Transaction 3 */}
+    <div className="flex justify-between items-center border-b pb-2">
+      <div>
+        <p className="text-gray-800 font-medium">TST* Village Burger BA</p>
+        <p className="text-sm text-gray-500">Dining</p>
+        <p className="text-sm text-gray-400">December 16</p>
+      </div>    
+      <p className="text-gray-800 font-semibold">$10.77</p>
+    </div>
+
+    {/* Transaction 4 */}
+    <div className="flex justify-between items-center border-b pb-2">
+      <div>
+        <p className="text-gray-800 font-medium">Ulta Beauty</p>
+        <p className="text-sm text-gray-500">Merchandise</p>
+        <p className="text-sm text-gray-400">December 14</p>
+      </div>
+      <p className="text-gray-800 font-semibold">$36.54</p>
+    </div>
+
+    {/* Transaction 5 */}
+    <div className="flex justify-between items-center">
+      <div>
+        <p className="text-gray-800 font-medium">Five Below</p>
+        <p className="text-sm text-gray-500">Merchandise</p>
+        <p className="text-sm text-gray-400">December 13</p>
+      </div>
+      <p className="text-gray-800 font-semibold">$35.45</p>
+    </div>
+  </div>
+
+  {/* View All Transactions Button */}
+  <div className="text-center mt-4">
+    <a
+      href="#"
+      className="text-blue-600 font-medium hover:underline text-sm"
+    >
+      View All Transactions
+    </a>
+  </div>
+</div>
         </div>
       )}
     </div>
